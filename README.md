@@ -1,7 +1,7 @@
 # moodle-tool_optionalplugins
 ___
 
-#Purpose
+# Purpose
 This plugin is intended to allow the export and mass installation of additional plugins into Moodle.
 
 Historically, end users had the task of installing additional plugins one at a time when setting up a new Moodle installation. Over time, as this can grow to be well be into the tens, or hundreds of additional plugins, naturally, it becomes quite a time-consuming exercise to have to carry out.
