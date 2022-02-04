@@ -46,7 +46,7 @@ switch ($action) {
 
     case 'validatesourcepluginlist':
 
-        $validation = validate_source_plugin_list($SESSION->filecontents, $CFG->updateminmaturity, $CFG->version);
+        $validation = validate_source_plugin_list($SESSION->filecontents, $CFG->updateminmaturity, $CFG->version,  $CFG->release);
 
         if ($validation == true) {
             redirect(new moodle_url("/admin/tool/optionalplugins/pluginpreview.php"));

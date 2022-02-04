@@ -92,12 +92,13 @@ function export_optional_plugins() {
  * @param string $filecontents
  * @param int $updateminmaturity
  * @param int $cfgversion
+ * @param string $cfgrelease
  * @return void
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
  */
-function validate_source_plugin_list($filecontents, $updateminmaturity, $cfgversion) {
+function validate_source_plugin_list($filecontents, $updateminmaturity, $cfgversion, $cfgrelease) {
 
     global $SESSION, $DB;
 
@@ -109,6 +110,8 @@ function validate_source_plugin_list($filecontents, $updateminmaturity, $cfgvers
         $canbeinstalled = array();
         $alreadyinstalled = array();
         $cannotbeinstalled = array();
+        // Knowing that not all plugins keep up with Moodle releases, exclude plugins that will render the site unusable.
+        $donotinstall = array('format_flexsections');
         $alreadyseen = array();
 
         // Clear anything that was set previously...
@@ -118,8 +121,10 @@ function validate_source_plugin_list($filecontents, $updateminmaturity, $cfgvers
 
         $pluginman = core_plugin_manager::instance();
 
-        // Needed for checking the maturity level of the remote plugin.
+        // Needed for checking various aspects of the remote plugin.
         $minmaturity = ((isset($updateminmaturity)) ? $updateminmaturity : MATURITY_STABLE);
+        $current_version = $cfgrelease;
+        $env_version = normalize_version($current_version);
 
         $plugindata = array();
         foreach ($jsondata as $tmpplugindata) {
@@ -143,6 +148,16 @@ function validate_source_plugin_list($filecontents, $updateminmaturity, $cfgvers
 
                 // First off, does this plugin meet our environments target version...
                 if ($sourceplugin->versionrequires <= $cfgversion) {
+
+                    // Currently, for Moodle 4.0 not all plugins will work. Sideline those that we're aware will break things.
+                    if ($env_version == 4.0) {
+                        if (in_array($sourceplugin->pluginname, $donotinstall)) {
+                            $plugindetails['notes'] = get_string('pluginrequired_text', 'tool_optionalplugins')
+                                . get_string('incompatibleversion', 'core_plugin', $cfgrelease);
+                            $cannotbeinstalled[] = $plugindetails;
+                            continue;
+                        }
+                    }
 
                     // Does the plugin already exist? (shouldn't, but will eventually if this is being run multiple times).
                     $plugincheck = $DB->count_records('config_plugins',
