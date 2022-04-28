@@ -30,6 +30,7 @@ require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->libdir . '/dataformatlib.php');
+require_once($CFG->libdir . '/environmentlib.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/optionalplugins/lib.php');
 
 require_admin();
