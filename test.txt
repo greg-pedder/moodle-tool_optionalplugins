@@ -1,1 +1,1 @@
-password='a super secret password';
+password='';
